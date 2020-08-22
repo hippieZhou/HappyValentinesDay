@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace HappyValentinesDay
+namespace HappyValentinesDay.UserControls
 {
     /// <summary>
-    /// Petal.xaml 的交互逻辑
+    /// Interaction logic for PetalControl.xaml
     /// </summary>
-    public partial class Petal : UserControl
+    public partial class PetalControl : UserControl
     {
-        public Petal()
+        public PetalControl()
         {
             InitializeComponent();
         }

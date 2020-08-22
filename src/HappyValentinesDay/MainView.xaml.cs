@@ -1,7 +1,6 @@
 ﻿using HappyValentinesDay.UserControls;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -9,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 namespace HappyValentinesDay
 {
@@ -25,28 +25,50 @@ namespace HappyValentinesDay
         }
 
 
-     
+        protected override void OnClosed(EventArgs e)
+        {
+            _tokenSource?.Cancel();
+            Application.Current.Shutdown();
+        }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            await StartHeart(PetalBackground);
-            String data = "我一直在等待你的出现^" +
-    "谢谢你选择了我^" +
-    "此生不换^" +
-    "执子之手，与子偕老^" +
-    "携手到永远……";
-            await StartTextAsync(data.Split('^'), Tb);
+            _tokenSource = new CancellationTokenSource();
+
+            await StartHeartAsync(PetalBackground);
+
+            var startTime = new DateTime(2020, 5, 2, 12, 0, 0, 0);
+            var span = DateTime.Now - startTime;
+            var data = new string[]
+            {
+                $"经历了 {(int)span.TotalDays} 天",
+                $"熬过了 {(int) span.TotalHours} 个小时",
+                "宝贝，-:)",
+                "和你在一起的每时每刻我都倍感珍惜",
+                "我想你，绝不仅仅是想你",
+                "而是想这辈子都和你在一起",
+                "不曾对爱情有过过多的奢求",
+                "这辈子有你足矣",
+                "一想到能和你共度余生",
+                "我就对余生充满了期待",
+                "我爱你，直至",
+                "天荒地老……"
+            };
+            await StartTextAsync(data, Tb);
         }
     }
 
     public partial class MainView : Window
     {
+        private CancellationTokenSource _tokenSource = null;
         private async Task StartTextAsync(string[] data, TextBlock textElement)
         {
             for (int i = 0; i < data.Length; i++)
             {
                 textElement.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, TimeSpan.FromSeconds(1.2)));
                 textElement.Text = data[i];
+                textElement.HorizontalAlignment = HorizontalAlignment.Center;
+                textElement.VerticalAlignment = VerticalAlignment.Center;
                 if (i != data.Length - 1)
                 {
                     await Task.Delay(3000);
@@ -56,19 +78,25 @@ namespace HappyValentinesDay
             }
         }
 
-        private async Task StartHeart(Canvas panel)
+        private async Task StartHeartAsync(Canvas panel)
         {
             Random random = new Random();
             await Task.Factory.StartNew(async () =>
              {
                  for (int j = 0; j < 25; j++)
                  {
+                     if (_tokenSource.IsCancellationRequested)
+                         return;
+
                      Thread.Sleep(j * 100);
                      await Dispatcher.InvokeAsync(() =>
                      {
                          int snowCount = random.Next(0, 10);
                          for (int i = 0; i < snowCount; i++)
                          {
+                             if (_tokenSource.IsCancellationRequested)
+                                 return;
+
                              #region 创建随机爱心
                              int width = random.Next(10, 40);
                              PetalControl heart = new PetalControl
@@ -108,9 +136,9 @@ namespace HappyValentinesDay
                              heart.RenderTransform.BeginAnimation(RotateTransform.AngleProperty, angleAnimation);
                              #endregion
                          }
-                     });
+                     }, DispatcherPriority.Normal, _tokenSource.Token);
                  }
-             });
+             }, _tokenSource.Token);
         }
     }
 }

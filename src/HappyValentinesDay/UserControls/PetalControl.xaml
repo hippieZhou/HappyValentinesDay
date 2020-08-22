@@ -15,7 +15,7 @@
             <Path.Fill>
                 <RadialGradientBrush>
                     <GradientStop Offset="1" Color="#FFFFA7A7" />
-                    <GradientStop Color="#FFFFB1B1" />
+                    <GradientStop Color="#ff0b37" />
                 </RadialGradientBrush>
             </Path.Fill>
         </Path>

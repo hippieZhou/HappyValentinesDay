@@ -1,6 +1,7 @@
 ﻿using HappyValentinesDay.UserControls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,17 +19,12 @@ namespace HappyValentinesDay
         {
             InitializeComponent();
         }
-        private void Window_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Escape)
-                Close();
-        }
-
 
         protected override void OnClosed(EventArgs e)
         {
+            base.OnClosed(e);
             _tokenSource?.Cancel();
-            Application.Current.Shutdown();
+            Process.GetCurrentProcess().Kill();
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -43,7 +39,7 @@ namespace HappyValentinesDay
             {
                 $"经历了 {(int)span.TotalDays} 天",
                 $"熬过了 {(int) span.TotalHours} 个小时",
-                "宝贝，-:)",
+                "宝贝，❤",
                 "和你在一起的每时每刻我都倍感珍惜",
                 "我想你，绝不仅仅是想你",
                 "而是想这辈子都和你在一起",

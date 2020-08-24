@@ -9,7 +9,6 @@
     AllowsTransparency="True"
     Background="{x:Null}"
     Icon="love.png"
-    KeyDown="Window_KeyDown"
     Loaded="Window_Loaded"
     ResizeMode="NoResize"
     ShowInTaskbar="True"
